@@ -1,6 +1,4 @@
-import { ModeToggle } from "@/components/ModeToggle";
 import LandingPage from "@/features/LandingPage";
-import Image from "next/image";
 import BlobBackground from "@/components/BlobBackground";
 
 export default function Home() {

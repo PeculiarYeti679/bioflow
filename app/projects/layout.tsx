@@ -1,6 +1,6 @@
 // /app/projects/layout.tsx
 import { ReactNode } from 'react';
-import { ThemeProvider } from '@/components/theme-provider';
+
 
 export const metadata = {
   title: 'Projects',
