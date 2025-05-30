@@ -33,6 +33,8 @@ export default function LandingPage() {
       >
         View Projects
       </Link>
+     
+
     </div>
   );
 }
