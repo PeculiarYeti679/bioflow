@@ -72,11 +72,11 @@
   --input: oklch(0.92 0 0);
   --ring: oklch(0.5 0.15 170); /* teal-ish ring */
 
-  --chart-1: oklch(0.65 0.2 40);   /* orange-gold */
-  --chart-2: oklch(0.6 0.12 185);  /* tech blue */
+  --chart-1: oklch(0.65 0.2 40); /* orange-gold */
+  --chart-2: oklch(0.6 0.12 185); /* tech blue */
   --chart-3: oklch(0.48 0.08 250); /* bluish purple */
-  --chart-4: oklch(0.83 0.19 85);  /* lime-green yellow */
-  --chart-5: oklch(0.77 0.18 70);  /* mid orange */
+  --chart-4: oklch(0.83 0.19 85); /* lime-green yellow */
+  --chart-5: oklch(0.77 0.18 70); /* mid orange */
 
   --sidebar: oklch(0.98 0 0);
   --sidebar-foreground: var(--foreground);
@@ -87,7 +87,6 @@
   --sidebar-border: var(--border);
   --sidebar-ring: var(--ring);
 }
-
 
 .dark {
   --background: oklch(0.18 0.01 260); /* very dark gray-blue */
@@ -132,7 +131,6 @@
   --sidebar-ring: var(--ring);
 }
 
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -143,7 +141,8 @@
 }
 
 @keyframes slowPulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {

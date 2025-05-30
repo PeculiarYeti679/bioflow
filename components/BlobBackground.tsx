@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
-import clsx from 'clsx';
+import { useEffect, useRef } from "react";
+import clsx from "clsx";
 
 interface BlobBackgroundProps {
   className?: string;
@@ -17,12 +17,12 @@ export default function BlobBackground({
   useEffect(() => {
     const svg = ref.current;
     if (!svg) return;
-    const circles = Array.from(svg.querySelectorAll('circle'));
+    const circles = Array.from(svg.querySelectorAll("circle"));
 
     const originalAttrs = circles.map((circle) => ({
-      r: parseFloat(circle.getAttribute('r') || '0'),
-      cx: parseFloat(circle.getAttribute('cx') || '0'),
-      cy: parseFloat(circle.getAttribute('cy') || '0'),
+      r: parseFloat(circle.getAttribute("r") || "0"),
+      cx: parseFloat(circle.getAttribute("cx") || "0"),
+      cy: parseFloat(circle.getAttribute("cy") || "0"),
     }));
 
     let frame = 0;
@@ -30,9 +30,18 @@ export default function BlobBackground({
       frame++;
       circles.forEach((circle, i) => {
         const { r, cx, cy } = originalAttrs[i];
-        circle.setAttribute('r', (r + Math.sin(frame / 30 + i) * wiggleIntensity).toString());
-        circle.setAttribute('cx', (cx + Math.sin(frame / 45 + i) * wiggleIntensity).toString());
-        circle.setAttribute('cy', (cy + Math.cos(frame / 45 + i) * wiggleIntensity).toString());
+        circle.setAttribute(
+          "r",
+          (r + Math.sin(frame / 30 + i) * wiggleIntensity).toString(),
+        );
+        circle.setAttribute(
+          "cx",
+          (cx + Math.sin(frame / 45 + i) * wiggleIntensity).toString(),
+        );
+        circle.setAttribute(
+          "cy",
+          (cy + Math.cos(frame / 45 + i) * wiggleIntensity).toString(),
+        );
       });
       requestAnimationFrame(animate);
     };
@@ -43,9 +52,9 @@ export default function BlobBackground({
   return (
     <div
       className={clsx(
-        'pointer-events-none blur-md opacity-10 text-primary dark:text-accent z-10',
-        'w-[1100px] h-[1100px] fixed rotate-12',
-        className
+        "pointer-events-none blur-md opacity-10 text-primary dark:text-accent z-10",
+        "w-[1100px] h-[1100px] fixed rotate-12",
+        className,
       )}
     >
       <svg
