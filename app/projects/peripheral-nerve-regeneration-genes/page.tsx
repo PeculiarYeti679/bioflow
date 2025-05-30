@@ -5,9 +5,7 @@ export default function OverviewPage() {
       <h1 className="text-2xl font-bold mb-4">
         Genes Upregulated During Peripheral Nerve Regeneration
       </h1>
-      <p>
-        {/* write your intro here */}
-      </p>
+      <p>{/* write your intro here */}</p>
     </>
-  )
+  );
 }

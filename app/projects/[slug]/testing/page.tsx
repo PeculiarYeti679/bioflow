@@ -1,4 +1,4 @@
- export default function TestingPage() {
+export default function TestingPage() {
   return (
     <>
       <h1 className="text-2xl font-bold mb-4">Testing Page</h1>

@@ -24,30 +24,31 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
- return (
-  <html lang="en" suppressHydrationWarning>
-    <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="flex min-h-screen flex-col">
-          <main className="flex-1">{children}</main>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="flex min-h-screen flex-col">
+            <main className="flex-1">{children}</main>
 
-          <footer className="p-4 bg-background dark:bg-background">
-            <div className="container mx-auto text-center">
-              <ModeToggle />
-              <p className="text-sm text-foreground dark:text-foreground">
-                © 2025 Edward Ybarra. All rights reserved.
-              </p>
-            </div>
-          </footer>
-        </div>
-      </ThemeProvider>
-    </body>
-  </html>
-);
-
+            <footer className="p-4 bg-background dark:bg-background">
+              <div className="container mx-auto text-center">
+                <ModeToggle />
+                <p className="text-sm text-foreground dark:text-foreground">
+                  © 2025 Edward Ybarra. All rights reserved.
+                </p>
+              </div>
+            </footer>
+          </div>
+        </ThemeProvider>
+      </body>
+    </html>
+  );
 }
