@@ -2,17 +2,17 @@ import { notFound } from "next/navigation";
 import { getProjectBySlug } from "@/lib/projects";
 import Link from "next/link";
 
-interface Props {
-  params: { slug: string };
-}
 
 // By default, this is a Server Component. You can `await` data-fetching calls here.
-export default async function ProjectOverviewPage({ params }: Props) {
+export default async function ProjectOverviewPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
   const { slug } = params;
   const project = getProjectBySlug(slug);
 
   if (!project) {
-    // If someone browses to /projects/this-slug-does-not-exist, return a 404.
     return notFound();
   }
 
