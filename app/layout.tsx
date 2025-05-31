@@ -41,7 +41,7 @@ export default function RootLayout({
             <footer className="p-4 bg-background dark:bg-background">
               <div className="container mx-auto text-center">
                 <ModeToggle />
-                <p className="text-sm text-foreground dark:text-foreground">
+                <p className="text-sm text-foreground dark:text-foreground pt-2">
                   © 2025 Edward Ybarra. All rights reserved.
                 </p>
               </div>

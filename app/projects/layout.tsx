@@ -6,10 +6,5 @@ export const metadata = {
 };
 
 export default function ProjectsLayout({ children }: { children: ReactNode }) {
-  return (
-    <div>
-      <h1 className="text-xl font-bold mb-4">BioForge</h1>
-      {children}
-    </div>
-  );
+  return <div>{children}</div>;
 }
