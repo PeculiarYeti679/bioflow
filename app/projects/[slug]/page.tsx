@@ -7,35 +7,26 @@ import Link from 'next/link';
 export default function ProjectOverviewPage({
   params,
 }: {
-  params: { slug: string };
+  params: { slug: any };
 }) {
   const { slug } = params;
   const project = getProjectBySlug(slug);
 
   if (!project) {
-    return notFound(); // Renders a 404 if slug not found
+    return notFound();
   }
 
   return (
     <article className="prose max-w-3xl mx-auto py-12">
-      {/* 1. Title */}
+   
       <h1 className="text-4xl font-bold">{project.title}</h1>
 
-      {/* 2. Short description or abstract */}
+     
       <p className="mt-4 text-lg">{project.description}</p>
 
-      {/* 3. (Optional) Featured image */}
-      {/* 
-      {project.imageUrl && (
-        <img 
-          src={project.imageUrl} 
-          alt={`Screenshot or diagram for ${project.title}`}
-          className="mt-6 rounded-lg shadow-md"
-        />
-      )} 
-      */}
+   
 
-      {/* 4. Quick navigation links (calls-to-action) */}
+      
       <nav className="mt-8 border-t pt-6 flex flex-wrap gap-4">
         <Link
           href={`/projects/${slug}/methodology`}
@@ -49,10 +40,10 @@ export default function ProjectOverviewPage({
         >
           Go to Data Analysis
         </Link>
-        {/* Add more if you like */}
+ 
       </nav>
 
-      {/* 5. (Optional) Any custom landing content you want—graphs, charts, embedded videos, etc. */}
+     
       <section className="mt-12">
         <h2 className="text-2xl font-semibold">Introduction</h2>
         <p className="mt-2">
