@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-
 @tailwind utilities;
 
 @import "tw-animate-css";
@@ -146,7 +145,8 @@
 }
 
 @keyframes slowPulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -159,34 +159,35 @@
 }
 
 @keyframes border-spin {
-  from { transform: rotate(0deg) }
-  to   { transform: rotate(360deg) }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @layer utilities {
   .card-wrapper {
-  
     @apply relative inline-block overflow-hidden rounded-2xl
            p-[2px] border-2;
-  
-   
+
     background-color: oklch(0.98 0 0);
-    border-color:     oklch(0.88 0.18 300);
+    border-color: oklch(0.88 0.18 300);
   }
 
- 
   .dark .card-wrapper {
     background-color: oklch(0.18 0.01 260);
-    border-color:     oklch(0.75 0.22 300);
+    border-color: oklch(0.75 0.22 300);
   }
 
   .card-wrapper::before {
-    content: '';
+    content: "";
     @apply absolute inset-0 z-0;
     background: conic-gradient(
-      oklch(0.7  0.2 145)  0deg,
-      oklch(0.98 0   0)    180deg,
-      oklch(0.7  0.2 145)  360deg
+      oklch(0.7 0.2 145) 0deg,
+      oklch(0.98 0 0) 180deg,
+      oklch(0.7 0.2 145) 360deg
     );
     animation: border-spin 6s linear infinite;
   }

@@ -1,6 +1,6 @@
-import { notFound } from 'next/navigation';
-import { getProjectBySlug } from '@/lib/projects';
-import Link from 'next/link';
+import { notFound } from "next/navigation";
+import { getProjectBySlug } from "@/lib/projects";
+import Link from "next/link";
 
 interface Props {
   params: { slug: string };
@@ -56,10 +56,11 @@ export default async function ProjectOverviewPage({ params }: Props) {
       <section className="mt-12">
         <h2 className="text-2xl font-semibold">Introduction</h2>
         <p className="mt-2">
-          Peripheral nerve regeneration is a complex, multi-step process. In this project, we aim
-          to pinpoint which transcripts are upregulated at specific time points after injury.
-          Our data will come from publicly available RNA-seq repositories, and we will validate
-          findings using qPCR on a subset of candidate genes.
+          Peripheral nerve regeneration is a complex, multi-step process. In
+          this project, we aim to pinpoint which transcripts are upregulated at
+          specific time points after injury. Our data will come from publicly
+          available RNA-seq repositories, and we will validate findings using
+          qPCR on a subset of candidate genes.
         </p>
       </section>
     </article>

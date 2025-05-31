@@ -8,23 +8,19 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { usePathname } from "next/navigation";
 import Link from "next/link";
 import React from "react";
 
 interface Crumb {
   label: string;
-  href?: string; 
+  href?: string;
 }
 
 interface BreadCrumbProps {
-
   crumbs: Crumb[];
 }
 
 export default function BreadCrumb({ crumbs }: BreadCrumbProps) {
- 
-
   return (
     <Breadcrumb>
       <BreadcrumbList>

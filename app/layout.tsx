@@ -37,7 +37,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="flex min-h-screen flex-col">
-              <NavBar />
+            <NavBar />
             <main className="flex-1">{children}</main>
 
             <footer className="p-4 bg-background dark:bg-background">
