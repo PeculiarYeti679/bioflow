@@ -7,7 +7,7 @@ import Link from 'next/link';
 export default function ProjectOverviewPage({
   params,
 }: {
-  params: { slug: any };
+  params: { slug: string };
 }) {
   const { slug } = params;
   const project = getProjectBySlug(slug);
