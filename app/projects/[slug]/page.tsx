@@ -1,10 +1,10 @@
-import { notFound } from "next/navigation";
-import { getProjectBySlug } from "@/lib/projects";
-import Link from "next/link";
+import { notFound } from 'next/navigation';
+import { getProjectBySlug } from '@/lib/projects';
+import Link from 'next/link';
 
-
-// By default, this is a Server Component. You can `await` data-fetching calls here.
-export default async function ProjectOverviewPage({
+// Notice: no explicit “PageProps” import, no custom interface.
+// We simply write: “the argument is { params: { slug: string } }”
+export default function ProjectOverviewPage({
   params,
 }: {
   params: { slug: string };
@@ -13,7 +13,7 @@ export default async function ProjectOverviewPage({
   const project = getProjectBySlug(slug);
 
   if (!project) {
-    return notFound();
+    return notFound(); // Renders a 404 if slug not found
   }
 
   return (
