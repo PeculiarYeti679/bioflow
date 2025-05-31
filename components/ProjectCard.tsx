@@ -16,7 +16,6 @@ export function ProjectCard({ slug, title, description }: ProjectCardProps) {
       className="hover:opacity-90 transition-opacity"
     >
       <div className="card-wrapper">
-
         <div className="card-content">
           <Card className="h-full bg-transparent border-none shadow-none">
             <CardHeader>
