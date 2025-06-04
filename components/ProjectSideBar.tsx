@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 export default function ProjectSidebar() {
   const { slug } = useParams();
   if (!slug) return null;
-
+ console.log("ProjectSidebar slug:", slug);
   const sections = [
     { label: "Overview", href: `/projects/${slug}` },
     { label: "Methodology", href: `/projects/${slug}/methodology` },

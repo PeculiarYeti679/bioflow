@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "@/components/ModeToggle";
 import NavBar from "@/components/NavBar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,6 +37,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+        
           <div className="flex min-h-screen flex-col">
             <NavBar />
             <main className="flex-1">{children}</main>
@@ -49,6 +51,7 @@ export default function RootLayout({
               </div>
             </footer>
           </div>
+         
         </ThemeProvider>
       </body>
     </html>
