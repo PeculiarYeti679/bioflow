@@ -3,12 +3,12 @@ import { notFound } from "next/navigation";
 import { getProjectBySlug } from "@/lib/projects";
 import Link from "next/link";
 
-export default function ProjectOverviewPage({
+export default async function ProjectOverviewPage({
   params,
 }: {
   params: { slug: string };
 }) {
-  const project = getProjectBySlug(params.slug);
+  const project = getProjectBySlug((await params).slug);
   if (!project) return notFound();
 
   return (
