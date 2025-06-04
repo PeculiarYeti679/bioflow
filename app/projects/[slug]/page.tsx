@@ -8,7 +8,8 @@ export default async function ProjectOverviewPage({
 }: {
   params: { slug: string };
 }) {
-  const project = getProjectBySlug((await params).slug);
+  const data = Promise.resolve(params);
+  const project = getProjectBySlug((await data).slug);
   if (!project) return notFound();
 
   return (
