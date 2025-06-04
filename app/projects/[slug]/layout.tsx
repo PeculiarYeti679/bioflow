@@ -1,11 +1,12 @@
-import ProjectSidebar from "@/components/ProjectSideBar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import ProjectSidebar from "@/components/ProjectSideBar";
 
 export default function ProjectLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen">
