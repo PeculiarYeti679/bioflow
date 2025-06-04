@@ -2,8 +2,8 @@
 import { notFound } from "next/navigation";
 import { getProjectBySlug } from "@/lib/projects";
 
-export default async function ProjectOverviewPage({ params }) {
-  const project = getProjectBySlug(params.slug);
+export default async function ProjectOverviewPage({ params } : { params: { slug: string } }) {
+  const project = getProjectBySlug(params?.slug);
   if (!project) return notFound();
 
   return (
