@@ -1,7 +1,7 @@
 // app/projects/page.tsx
 import { getAllProjects } from "@/features/projects/fetchProjectList";
 import { ProjectCard } from "@/components/ProjectCard";
-
+import { ProjectPreview } from "@/lib/types/projectPreview";
 
 export default async function ProjectsIndexPage() {
   const projects = await getAllProjects(); 
@@ -17,7 +17,7 @@ export default async function ProjectsIndexPage() {
         </p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-center max-w-5xl mx-auto">
-        {projects.map((project) => (
+        {projects.map((project: ProjectPreview) => (
           <ProjectCard
             key={project.slug}
             slug={project.slug}

@@ -1,9 +1,10 @@
-
 "use server";
 
-import { prisma } from "@/lib/prisma"; // adjust the path as needed
+import { prisma } from "@/lib/prisma"; 
+import { ProjectPreview } from "@/lib/types/projectPreview";
 
-export async function getAllProjects() {
+
+export async function getAllProjects(): Promise<ProjectPreview[]> {
   return await prisma.project.findMany({
     select: {
       slug: true,
@@ -14,7 +15,7 @@ export async function getAllProjects() {
   });
 }
 
-export async function getProjectBySlug(slug: string) {
+export async function getProjectBySlug(slug: string): Promise<ProjectPreview | null> {
   return await prisma.project.findUnique({
     where: { slug },
     include: {
