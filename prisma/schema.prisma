@@ -8,8 +8,40 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model notes {
-  id    BigInt @id @default(autoincrement())
-  title String
+model Project {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  sections    Section[]
+}
+
+model Section {
+  id        String       @id @default(cuid())
+  title     String
+  order     Int
+  projectId String
+  project   Project      @relation(fields: [projectId], references: [id])
+
+  contentItems ContentItem[]
+}
+
+model ContentItem {
+  id        String       @id @default(cuid())
+  type      ContentType
+  data      Json
+  order     Int
+  sectionId String
+  section   Section      @relation(fields: [sectionId], references: [id])
+}
+
+enum ContentType {
+  TEXT
+  CHART
+  IMAGE
+  TABLE
+  CODE
 }

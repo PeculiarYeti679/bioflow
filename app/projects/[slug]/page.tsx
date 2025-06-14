@@ -1,11 +1,11 @@
 // app/projects/[slug]/page.tsx
 import { notFound } from "next/navigation";
-import { getProjectBySlug } from "@/lib/projects";
+import { getProjectBySlug } from "@/features/projects/fetchProjectList";
 
 export default async function ProjectOverviewPage({ params } : { params: Promise<{slug: string}> }) {
   const {slug} = await params;
-  const project = getProjectBySlug(slug);
-
+  const project = await getProjectBySlug(slug);
+  
   if (!project) return notFound();
 
   return (
