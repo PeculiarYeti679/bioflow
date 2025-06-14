@@ -1,12 +1,8 @@
 "use server";
 
 import { prisma } from "@/lib/prisma"; 
+import { ProjectPreview } from "@/lib/types/projectPreview";
 
- type ProjectPreview = {
-  slug: string;
-  title: string;
-  description: string | null;
-};
 
 export async function getAllProjects(): Promise<ProjectPreview[]> {
   return await prisma.project.findMany({
