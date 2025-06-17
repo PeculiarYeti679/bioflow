@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@/lib/prisma"; 
+
 import { ProjectPreview } from "@/lib/types/projectPreview";
 
 
