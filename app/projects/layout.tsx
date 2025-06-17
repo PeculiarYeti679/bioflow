@@ -6,5 +6,5 @@ export const metadata = {
 };
 
 export default function ProjectsLayout({ children }: { children: ReactNode }) {
-  return <div>{children}</div>;
+  return <div className="relative">{children}</div>;
 }

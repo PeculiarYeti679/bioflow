@@ -8,8 +8,9 @@ export default function ProjectLayout({
 }) {
 
   return (
+
     <SidebarProvider>
-      <div className="flex min-h-screen">
+      <div className="flex h-full relative">
         <ProjectSidebar /> {/* client component */}
         <main className="flex-1 p-6">
           {" "}
