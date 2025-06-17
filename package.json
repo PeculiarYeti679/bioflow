@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "npm install @supabase/supabase-jsnext build",
+    "build": "npm install @supabase/supabase-js build",
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
