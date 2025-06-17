@@ -1,32 +1,44 @@
-"use server";
+"use server"
 
-
-import { ProjectPreview } from "@/lib/types/projectPreview";
-
+import {supabase} from "@/lib/supabaseClient";
+import {ProjectPreview} from "@/lib/types/projectPreview";
 
 export async function getAllProjects(): Promise<ProjectPreview[]> {
-  return await prisma.project.findMany({
-    select: {
-      slug: true,
-      title: true,
-      description: true,
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  const { data, error } = await supabase
+      .from("Project")
+      .select("slug, title, description")
+      .order("createdAt", { ascending: false })
+
+  if (error) throw new Error(error.message)
+  return data as ProjectPreview[]
 }
 
 export async function getProjectBySlug(slug: string): Promise<ProjectPreview | null> {
-  return await prisma.project.findUnique({
-    where: { slug },
-    include: {
-      sections: {
-        orderBy: { order: "asc" },
-        include: {
-          contentItems: {
-            orderBy: { order: "asc" },
-          },
-        },
-      },
-    },
-  });
+  const { data, error } = await supabase
+      .from("Project")
+      .select(`
+    slug,
+    title,
+    description,
+    Section (
+      id,
+      title,
+      order,
+      ContentItem (
+        id,
+        "order",
+        type,
+        data
+      )
+    )
+  `)
+      .eq("slug", slug)
+      .single()
+
+  if (error) {
+    if (error.code === "PGRST116") return null // not found
+    throw new Error(error.message)
+  }
+
+  return data as ProjectPreview
 }
