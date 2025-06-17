@@ -1,44 +1,62 @@
 "use client";
 
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarGroup,
+    SidebarGroupLabel,
+    SidebarGroupContent,
+    SidebarMenu,
+    SidebarMenuItem,
+    SidebarMenuButton,
+} from "@/components/ui/sidebar";
+import { useParams, usePathname } from "next/navigation";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { Card } from "@/components/ui/card";
+import clsx from "clsx";
+import {titleFromSlug} from "@/lib/functions/titleFromSlug";
 
 export default function ProjectSidebar() {
-  const { slug } = useParams();
-  if (!slug) return null;
- console.log("ProjectSidebar slug:", slug);
-  const sections = [
-    { label: "Overview", href: `/projects/${slug}` },
-    { label: "Methodology", href: `/projects/${slug}/methodology` },
-    { label: "Testing", href: `/projects/${slug}/testing` },
-    { label: "Data Analysis", href: `/projects/${slug}/data-analysis` },
-    { label: "Findings", href: `/projects/${slug}/findings` },
-  ];
+    const {slug} = useParams();
+    const pathname = usePathname();
+    if (!slug) return null;
 
-  return (
-    <aside className="w-64 p-4 border-r bg-background">
-      <Card className="p-4 space-y-4 shadow-md">
-        <h2 className="text-xl font-semibold capitalize tracking-tight">
-          {typeof slug === "string"
-            ? slug.replace(/-/g, " ")
-            : Array.isArray(slug)
-              ? slug.join("-").replace(/-/g, " ")
-              : ""}
-        </h2>
-        <ul className="space-y-2">
-          {sections.map((s) => (
-            <li key={s.href}>
-              <Link
-                href={s.href}
-                className="block px-3 py-2 rounded-md text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
-              >
-                {s.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </Card>
-    </aside>
-  );
+    const sections = [
+        {label: "Overview", href: `/projects/${slug}`},
+        {label: "Methodology", href: `/projects/${slug}/methodology`},
+        {label: "Testing", href: `/projects/${slug}/testing`},
+        {label: "Data Analysis", href: `/projects/${slug}/data-analysis`},
+        {label: "Findings", href: `/projects/${slug}/findings`},
+    ];
+ const title = titleFromSlug(slug);
+    return (
+            <Sidebar  variant="inset" collapsible='none' className="relative ">
+                <SidebarContent >
+                    <SidebarGroup>
+                        <SidebarGroupLabel className="text-muted-foreground mb-2 text-sm font-semibold">
+                            {title}
+                        </SidebarGroupLabel>
+                        <SidebarGroupContent>
+                            <SidebarMenu>
+                                {sections.map((item) => (
+                                    <SidebarMenuItem key={item.label}>
+                                        <SidebarMenuButton asChild>
+                                            <Link
+                                                href={item.href}
+                                                className={clsx(
+                                                    "block w-full rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground",
+                                                    pathname === item.href &&
+                                                    "bg-accent text-accent-foreground font-medium"
+                                                )}
+                                            >
+                                                {item.label}
+                                            </Link>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                ))}
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                </SidebarContent>
+            </Sidebar>
+    );
 }
