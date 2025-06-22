@@ -1,5 +1,6 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import ProjectSidebar from "@/components/ProjectSideBar";
+import "../../globals.css";
 
 export default function ProjectLayout({
   children,
@@ -10,7 +11,7 @@ export default function ProjectLayout({
   return (
 
     <SidebarProvider>
-      <div className="flex h-full relative">
+    <div className="flex h-screen relative">
         <ProjectSidebar /> {/* client component */}
         <main className="flex-1 p-6">
           {" "}
