@@ -29,7 +29,13 @@ export default function ProjectSidebar() {
     ];
  const title = titleFromSlug(slug);
     return (
-            <Sidebar  variant="inset" collapsible='none' className="relative ">
+         <Sidebar
+  variant="floating"
+  collapsible="offcanvas"
+  className={clsx(
+    "fixed top-[6.5rem]  h-[calc(100vh-6.5rem)] w-64  md:flex"
+  )}
+>
                 <SidebarContent >
                     <SidebarGroup>
                         <SidebarGroupLabel className="text-muted-foreground mb-2 text-sm font-semibold">
