@@ -2,8 +2,13 @@ import { fetchSectionContent } from  "@/features/projects/server/fetchContent";
 import { notFound } from "next/navigation";
 import ContentRenderer from "@/features/projects/ContentRenderer";
 
-export default async function FindingsPage({ params }: { params: { slug: string } }) {
- const sectionContent = await fetchSectionContent(params.slug, "Data Analysis");
+export default async function FindingsPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+ const sectionContent = await fetchSectionContent(slug, "Data Analysis");
   if (!sectionContent) return notFound();
 
   return (
