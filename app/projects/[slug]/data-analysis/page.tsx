@@ -15,7 +15,7 @@ export default async function DataAnalysisPage({
     <>
       <h1 className="text-2xl font-bold mb-4">{sectionContent.section.title}</h1>
       {(sectionContent.items ?? []).map((item) => (
-        <ContentRenderer key={item.id} type={item.type} data={item.data} />
+        <ContentRenderer key={item.id} type={item.type} data={item.data} title={item.title}/>
       ))}
     </>
   );

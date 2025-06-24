@@ -24,7 +24,7 @@ export default async function ProjectOverviewPage({
       <hr className="my-8" />
 
       {overviewSection?.items?.map((item) => (
-        <ContentRenderer key={item.id} type={item.type} data={item.data} />
+        <ContentRenderer key={item.id} type={item.type} data={item.data} title={item.title}/>
       ))}
     </article>
   );
