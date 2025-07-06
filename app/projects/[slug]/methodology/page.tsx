@@ -8,7 +8,7 @@ export default async function MethodologyPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
- const sectionContent = await fetchSectionContent(slug, "Data Analysis");
+ const sectionContent = await fetchSectionContent(slug, "Methodology");
   if (!sectionContent) return notFound();
 
   return (
