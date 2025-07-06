@@ -1,7 +1,6 @@
 // app/projects/page.tsx
-import { getAllProjects } from "@/features/projects/fetchProjectList";
+import { getAllProjects } from "@/features/projects/server/fetchProjectList";
 import { ProjectCard } from "@/components/ProjectCard";
-
 
 export default async function ProjectsIndexPage() {
   const projects = await getAllProjects();
