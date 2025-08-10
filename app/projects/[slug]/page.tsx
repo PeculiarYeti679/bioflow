@@ -6,9 +6,9 @@ import { fetchSectionContent } from "@/features/projects/server/fetchContent";
 export default async function ProjectOverviewPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const { slug } = params;
+  const { slug } = await params;
 
   const project = await getProjectBySlug(slug);
   if (!project) return notFound();
