@@ -40,7 +40,7 @@ export default function RootLayout({
         
           <div className="flex min-h-screen flex-col">
             <NavBar />
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 pb-6">{children}</main>
 
             <footer className="p-4 bg-background dark:bg-background">
               <div className="container mx-auto text-center">
