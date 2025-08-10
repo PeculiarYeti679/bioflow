@@ -42,7 +42,7 @@ export default function RootLayout({
             <NavBar />
             <main className="flex-1 pb-6">{children}</main>
 
-            <footer className="p-4 bg-background dark:bg-background">
+            <footer className="p-4 bg-background dark:bg-background pt-2">
               <div className="container mx-auto text-center">
                 <ModeToggle />
                 <p className="text-sm text-foreground dark:text-foreground pt-2">

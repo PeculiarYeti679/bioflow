@@ -7,14 +7,12 @@ export default function ProjectLayout({
 }: {
   children: React.ReactNode;
 }) {
-
   return (
-
     <SidebarProvider>
-    <div className="flex h-screen relative">
-        <ProjectSidebar /> {/* client component */}
-        <main className="flex-1 p-6">
-          {" "}
+      {/* No h-screen here */}
+      <div className="flex min-h-0">
+        <ProjectSidebar />
+        <main className="flex-1 p-6 min-w-0">
           <SidebarTrigger />
           {children}
         </main>

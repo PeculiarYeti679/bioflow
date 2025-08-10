@@ -16,7 +16,7 @@ export default async function MethodologyPage({
   const items = sectionContent.items ?? [];
   if (items.length === 0) return notFound();
 
-  // Page (Methodology)
+ 
 return (
   <div className="reader">
     <header className="mb-6">
