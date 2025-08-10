@@ -3,11 +3,11 @@ import { notFound } from "next/navigation";
 import ContentRenderer from "@/features/projects/ContentRenderer";
 
 export default async function MethodologyPage({
-  params,
+   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const { slug } = params;
+  const { slug } = await params;
 
   const sectionContent = await fetchSectionContent(slug, "Methodology");
   if (!sectionContent) return notFound();

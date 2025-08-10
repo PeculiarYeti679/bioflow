@@ -12,11 +12,16 @@ export default async function DataAnalysisPage({
   if (!sectionContent) return notFound();
 
   return (
-    <>
-      <h1 className="text-2xl font-bold mb-4">{sectionContent.section.title}</h1>
-      {(sectionContent.items ?? []).map((item) => (
-        <ContentRenderer key={item.id} type={item.type} data={item.data} title={item.title}/>
-      ))}
-    </>
+    <div className="reader">
+      <header className="mb-6">
+        <h1 className="text-3xl font-bold tracking-tight">
+          {sectionContent.section.title}
+        </h1>
+      </header>
+  
+      <div className="reader-flow">
+        <ContentRenderer items={sectionContent.items ?? []} />
+      </div>
+    </div>
   );
-}
+  }
