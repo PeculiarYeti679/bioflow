@@ -2,6 +2,9 @@
 @import "tw-animate-css";
 
 @tailwind utilities;
+@import "tailwindcss";
+
+@plugin "@tailwindcss/typography";
 
 @import "tw-animate-css";
 
@@ -167,6 +170,42 @@
   }
 }
 
+/* Put this after your variables and before @layer utilities is fine */
+
+/* Base prose color & link style */
+.prose {
+  color: var(--foreground);
+}
+.prose :where(a):not(:where(.not-prose *)) {
+  color: var(--primary);
+  text-decoration: underline;
+}
+.prose :where(code):not(:where(.not-prose *)) {
+  background: oklch(0.95 0 0 / 0.65);
+  padding: .15rem .35rem;
+  border-radius: .35rem;
+}
+
+/* Headings use foreground, not gray */
+.prose :where(h1,h2,h3,h4):not(:where(.not-prose *)) {
+  color: var(--foreground);
+}
+
+/* Horizontal rules and blockquotes */
+.prose :where(hr):not(:where(.not-prose *)) {
+  border-color: var(--border);
+  opacity: 1;
+}
+.prose :where(blockquote):not(:where(.not-prose *)) {
+  border-left-color: var(--border);
+  color: var(--muted-foreground);
+}
+
+/* Dark mode inversion helper still works */
+.dark .prose {
+  /* if you use `dark:prose-invert`, you may not need extra rules here */
+}
+
 @layer utilities {
 .card-wrapper {
   @apply relative inline-block overflow-hidden rounded-2xl;
@@ -207,5 +246,15 @@
   .card-content {
     @apply relative z-10 rounded-2xl
            bg-card dark:bg-card;
+  }
+
+  .reader {
+    @apply mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-0;
+  }
+  .reader-flow {
+    @apply space-y-8;
+  }
+   .prose-trim :where(p, ul, ol, pre, blockquote, figure, h1, h2, h3, h4):last-child {
+    margin-bottom: 0 !important;
   }
 }
