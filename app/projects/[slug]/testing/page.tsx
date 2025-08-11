@@ -8,7 +8,7 @@ export default async function TestingPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
- const sectionContent = await fetchSectionContent(slug, "Data Analysis");
+ const sectionContent = await fetchSectionContent(slug, "Testing");
   if (!sectionContent) return notFound();
 
 return (
