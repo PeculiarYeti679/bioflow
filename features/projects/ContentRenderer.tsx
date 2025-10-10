@@ -45,8 +45,10 @@ async function getPublicUrl(bucket: string, path: string): Promise<string | null
   }
   return data?.publicUrl ?? null;
 }
-function asImagePayload(input: ImageBlock["data"]): ImagePayload {
-  const payload = (input as any)?.data ? (input as any).data : (input as any);
+function asImagePayload(input: ImagePayload | { data: ImagePayload }): ImagePayload {
+  const payload = (typeof (input as { data?: ImagePayload }).data !== "undefined")
+    ? (input as { data: ImagePayload }).data
+    : (input as ImagePayload);
   return {
     url: stripAccidentalSuffix(payload?.url),
     path: payload?.path,

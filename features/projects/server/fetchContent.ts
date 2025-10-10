@@ -68,7 +68,7 @@ function stripAccidentalSuffix(url?: string): string | undefined {
 
 function normalizeItem(raw: RawContentItem): NormalizedItem | null {
   // 1) Parse possible stringified JSON
-  const parsed = typeof raw.data === "string" ? safeParse(raw.data) : (raw.data as any);
+  const parsed = typeof raw.data === "string" ? safeParse(raw.data) : (raw.data as Record<string, unknown>);
 
   // 2) Some shapes embed payload under `data`
   const payload = parsed?.data ?? parsed ?? {};

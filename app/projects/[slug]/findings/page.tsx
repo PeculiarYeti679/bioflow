@@ -20,7 +20,15 @@ return (
     </header>
 
     <div className="reader-flow">
-      <ContentRenderer items={sectionContent.items ?? []} />
+      <ContentRenderer
+        items={
+          (sectionContent.items ?? []).map((item) => ({
+            ...item,
+            title: item.title ?? undefined,
+            subtitle: item.subtitle ?? undefined,
+          }))
+        }
+      />
     </div>
   </div>
 );
