@@ -22,9 +22,10 @@ export default function LandingPage() {
       </h1>
 
       <p className="text-muted-foreground text-lg">
-        This site hosts a collection of projects exploring gene regulation,
-        neural repair, and computational biology. Each project breaks down
-        complex bioinformatics workflows into digestible, visual steps.
+        This site hopes to host a collection of projects the will explore 
+        compuational biology and bioinformatics. These project are instended
+        to walk through the process of analyhzing data and coming to 
+        conclusions.
       </p>
 
       <Link
