@@ -11,8 +11,7 @@ export default async function ProjectsIndexPage() {
           Explore My Research Projects
         </h1>
         <p className="text-muted-foreground text-lg">
-          Each project explores a different biological or computational
-          question. Learn about my process, methodology, and findings.
+          These projects are intended to explore computation and biology. 
         </p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center max-w-5xl mx-auto px-4">
