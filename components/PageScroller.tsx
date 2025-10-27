@@ -9,21 +9,20 @@ type PageScrollerProps = {
   routes: string[];
   scrollContainerSelector?: string;
   cooldownMs?: number;
-  /** px tolerance from top/bottom that counts as “at edge”. Try to keep this small. */
-  edgeThreshold?: number;
-  /** how many consecutive “nudges” at the edge before navigating */
-  edgeIntentCount?: number;
-  /** how long (ms) the intent window stays open for consecutive nudges */
-  edgeIntentWindowMs?: number;
+  edgeThreshold?: number;      // px near edge
+  edgeIntentCount?: number;    // consecutive nudges needed
+  edgeIntentWindowMs?: number; // time window for nudges
+  edgeRestMs?: number;         // must be fully stopped at edge this long
 };
 
 export default function PageScroller({
   routes,
   scrollContainerSelector,
   cooldownMs = 800,
-  edgeThreshold = 6,
+  edgeThreshold = 4,
   edgeIntentCount = 2,
   edgeIntentWindowMs = 700,
+  edgeRestMs = 180,
 }: PageScrollerProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -31,65 +30,47 @@ export default function PageScroller({
   const busyRef = useRef(false);
   const touchStartY = useRef<number | null>(null);
 
-  // Track “nudges” at an edge to avoid accidental flips from momentum
-  const intentRef = useRef<{
-    dir: "up" | "down" | null;
-    count: number;
-    timer: number | null;
-  }>({ dir: null, count: 0, timer: null });
+  // Use scrollingElement for reliable window scroll metrics across browsers/zoom
+  const scrollEl = () =>
+    typeof window === "undefined"
+      ? null
+      : (document.scrollingElement as HTMLElement | null) || document.documentElement;
 
-  const resetIntent = () => {
-    if (intentRef.current.timer) {
-      window.clearTimeout(intentRef.current.timer);
-    }
-    intentRef.current = { dir: null, count: 0, timer: null };
+  const getScroller = (): AnyScroller | null => {
+    if (typeof window === "undefined") return null;
+    if (!scrollContainerSelector) return window;
+    return document.querySelector<HTMLElement>(scrollContainerSelector) || window;
   };
-
-  const bumpIntent = (dir: "up" | "down") => {
-    const sameDir = intentRef.current.dir === dir;
-    intentRef.current = {
-      dir,
-      count: sameDir ? intentRef.current.count + 1 : 1,
-      timer: (intentRef.current.timer && window.clearTimeout(intentRef.current.timer), // clear old
-        window.setTimeout(() => {
-          // window closes; require fresh consecutive nudges
-          resetIntent();
-        }, edgeIntentWindowMs)),
-    };
-    return intentRef.current.count >= edgeIntentCount;
-  };
+  const isWindow = (s: AnyScroller): s is Window => typeof (s as Window).scrollY === "number";
 
   const idx = useMemo(() => routes.findIndex((r) => r === pathname), [routes, pathname]);
   const prevRoute = idx > 0 ? routes[idx - 1] : null;
   const nextRoute = idx >= 0 && idx < routes.length - 1 ? routes[idx + 1] : null;
 
+  // Prefetch neighbors
   useEffect(() => {
     if (nextRoute) router.prefetch(nextRoute);
     if (prevRoute) router.prefetch(prevRoute);
   }, [nextRoute, prevRoute, router]);
 
-  const getScroller = (): AnyScroller | null => {
-    if (typeof window === "undefined") return null;
-    if (!scrollContainerSelector) return window;
-    const el = document.querySelector<HTMLElement>(scrollContainerSelector);
-    return el || window;
-  };
-
-  const isWindow = (s: AnyScroller): s is Window => typeof (s as Window).scrollY === "number";
-
   const distFromBottom = (s: AnyScroller) => {
     if (isWindow(s)) {
-      const scrolled = s.scrollY + s.innerHeight;
-      const docH = document.documentElement.scrollHeight;
+      const el = scrollEl();
+      if (!el) return 0;
+      const scrolled = el.scrollTop + window.innerHeight;
+      const docH = el.scrollHeight;
       return Math.max(0, docH - scrolled);
     } else {
       return Math.max(0, s.scrollHeight - s.scrollTop - s.clientHeight);
     }
   };
   const distFromTop = (s: AnyScroller) => {
-    return isWindow(s) ? Math.max(0, s.scrollY) : Math.max(0, s.scrollTop);
+    if (isWindow(s)) {
+      const el = scrollEl();
+      return Math.max(0, (el?.scrollTop ?? 0));
+    }
+    return Math.max(0, s.scrollTop);
   };
-
   const atBottom = (s: AnyScroller) => distFromBottom(s) <= edgeThreshold;
   const atTop = (s: AnyScroller) => distFromTop(s) <= edgeThreshold;
 
@@ -98,6 +79,84 @@ export default function PageScroller({
     busyRef.current = true;
     fn();
     setTimeout(() => (busyRef.current = false), cooldownMs);
+  };
+
+  // “Intent” + “Rest-at-edge” state
+  const intentRef = useRef<{
+    dir: "up" | "down" | null;
+    count: number;
+    timer: number | null;
+  }>({ dir: null, count: 0, timer: null });
+
+  const restRef = useRef<{
+    dir: "up" | "down" | null;
+    startedAt: number | null;
+    raf: number | null;
+  }>({ dir: null, startedAt: null, raf: null });
+
+  const resetIntent = () => {
+    if (intentRef.current.timer) window.clearTimeout(intentRef.current.timer);
+    intentRef.current = { dir: null, count: 0, timer: null };
+  };
+
+  const bumpIntent = (dir: "up" | "down") => {
+    const same = intentRef.current.dir === dir;
+    if (!same) intentRef.current.count = 0;
+    intentRef.current.dir = dir;
+    intentRef.current.count += 1;
+
+    if (intentRef.current.timer) window.clearTimeout(intentRef.current.timer);
+    intentRef.current.timer = window.setTimeout(() => {
+      // window expired—require fresh nudges
+      resetIntent();
+    }, edgeIntentWindowMs);
+
+    return intentRef.current.count >= edgeIntentCount;
+  };
+
+  // Start a “rest detector”: only pass if scroll position remains at edge for edgeRestMs
+  const startRestCheck = (dir: "up" | "down", scroller: AnyScroller, onPass: () => void) => {
+    cancelRestCheck();
+    restRef.current.dir = dir;
+    restRef.current.startedAt = null;
+
+    const readPos = () =>
+      isWindow(scroller)
+        ? { top: distFromTop(scroller), bottom: distFromBottom(scroller) }
+        : { top: distFromTop(scroller), bottom: distFromBottom(scroller) };
+
+    let lastTop = readPos().top;
+    let lastBottom = readPos().bottom;
+
+    const tick = (ts: number) => {
+      const { top, bottom } = readPos();
+      const atEdge = dir === "down" ? bottom <= edgeThreshold : top <= edgeThreshold;
+
+      // Any movement away from the edge cancels the rest timer
+      const moved = dir === "down" ? bottom > lastBottom + 0.5 : top > lastTop + 0.5;
+      lastTop = top;
+      lastBottom = bottom;
+
+      if (!atEdge || moved) {
+        restRef.current.startedAt = null;
+      } else {
+        if (restRef.current.startedAt == null) restRef.current.startedAt = ts;
+        const elapsed = ts - (restRef.current.startedAt ?? ts);
+        if (elapsed >= edgeRestMs) {
+          cancelRestCheck();
+          onPass();
+          return;
+        }
+      }
+      restRef.current.raf = window.requestAnimationFrame(tick);
+    };
+
+    restRef.current.raf = window.requestAnimationFrame(tick);
+  };
+
+  const cancelRestCheck = () => {
+    if (restRef.current.raf) cancelAnimationFrame(restRef.current.raf);
+    restRef.current = { dir: null, startedAt: null, raf: null };
   };
 
   useEffect(() => {
@@ -112,42 +171,74 @@ export default function PageScroller({
       return !!el?.closest('[data-scroll-lock="true"], [data-scrollable="true"]');
     };
 
+    const considerNavigate = (dir: "up" | "down") => {
+      if (dir === "down" && canGoNext()) withCooldown(() => nextRoute && router.push(nextRoute));
+      if (dir === "up" && canGoPrev()) withCooldown(() => prevRoute && router.push(prevRoute));
+    };
+
     const onWheel = (e: Event) => {
       const we = e as WheelEvent;
       if (isInsideNestedScrollable(we.target)) return;
 
-      // If you move away from the edge, clear the “intent”
-      if (!atTop(scroller) && !atBottom(scroller)) resetIntent();
+      const goingDown = we.deltaY > 0;
+      const goingUp = we.deltaY < 0;
 
-      if (we.deltaY > 0 && canGoNext() && atBottom(scroller)) {
-        // require consecutive nudges within the window
-        we.preventDefault();
-        if (bumpIntent("down")) withCooldown(() => nextRoute && router.push(nextRoute));
-      } else if (we.deltaY < 0 && canGoPrev() && atTop(scroller)) {
-        we.preventDefault();
-        if (bumpIntent("up")) withCooldown(() => prevRoute && router.push(prevRoute));
+      // Away from edges? clear intent & rest
+      if (!atTop(scroller) && !atBottom(scroller)) {
+        resetIntent();
+        cancelRestCheck();
+        return;
+      }
+
+      if (goingDown && atBottom(scroller)) {
+        e.preventDefault();
+        if (bumpIntent("down")) {
+          // require a brief full-stop at bottom
+          startRestCheck("down", scroller, () => considerNavigate("down"));
+        }
+      } else if (goingUp && atTop(scroller)) {
+        e.preventDefault();
+        if (bumpIntent("up")) {
+          startRestCheck("up", scroller, () => considerNavigate("up"));
+        }
       } else {
-        // normal scrolling resets intent direction if you scroll the other way
-        if (we.deltaY > 0 && intentRef.current.dir === "up") resetIntent();
-        if (we.deltaY < 0 && intentRef.current.dir === "down") resetIntent();
+        // Direction changed—reset
+        if (goingDown && intentRef.current.dir === "up") {
+          resetIntent();
+          cancelRestCheck();
+        }
+        if (goingUp && intentRef.current.dir === "down") {
+          resetIntent();
+          cancelRestCheck();
+        }
       }
     };
 
     const onKey = (e: KeyboardEvent) => {
       const downKeys = new Set(["PageDown", "ArrowDown", " "]);
       const upKeys = new Set(["PageUp", "ArrowUp"]);
-      if (!atTop(scroller) && !atBottom(scroller)) resetIntent();
 
-      if (downKeys.has(e.key) && canGoNext() && atBottom(scroller)) {
+      if (!atTop(scroller) && !atBottom(scroller)) {
+        resetIntent();
+        cancelRestCheck();
+        return;
+      }
+
+      if (downKeys.has(e.key) && atBottom(scroller)) {
         e.preventDefault();
-        if (bumpIntent("down")) withCooldown(() => nextRoute && router.push(nextRoute));
-      } else if (upKeys.has(e.key) && canGoPrev() && atTop(scroller)) {
+        if (bumpIntent("down")) startRestCheck("down", scroller, () => considerNavigate("down"));
+      } else if (upKeys.has(e.key) && atTop(scroller)) {
         e.preventDefault();
-        if (bumpIntent("up")) withCooldown(() => prevRoute && router.push(prevRoute));
+        if (bumpIntent("up")) startRestCheck("up", scroller, () => considerNavigate("up"));
       } else {
-        // different key path cancels the current edge-intent
-        if (downKeys.has(e.key) && intentRef.current.dir === "up") resetIntent();
-        if (upKeys.has(e.key) && intentRef.current.dir === "down") resetIntent();
+        if (downKeys.has(e.key) && intentRef.current.dir === "up") {
+          resetIntent();
+          cancelRestCheck();
+        }
+        if (upKeys.has(e.key) && intentRef.current.dir === "down") {
+          resetIntent();
+          cancelRestCheck();
+        }
       }
     };
 
@@ -159,16 +250,27 @@ export default function PageScroller({
       const dy = touchStartY.current - e.changedTouches[0].clientY;
       const SWIPE = 40;
 
-      if (!atTop(scroller) && !atBottom(scroller)) resetIntent();
+      if (!atTop(scroller) && !atBottom(scroller)) {
+        resetIntent();
+        cancelRestCheck();
+        touchStartY.current = null;
+        return;
+      }
 
-      if (dy > SWIPE && canGoNext() && atBottom(scroller)) {
-        if (bumpIntent("down")) withCooldown(() => nextRoute && router.push(nextRoute));
-      } else if (dy < -SWIPE && canGoPrev() && atTop(scroller)) {
-        if (bumpIntent("up")) withCooldown(() => prevRoute && router.push(prevRoute));
+      if (dy > SWIPE && atBottom(scroller)) {
+        if (bumpIntent("down")) startRestCheck("down", scroller, () => considerNavigate("down"));
+      } else if (dy < -SWIPE && atTop(scroller)) {
+        if (bumpIntent("up")) startRestCheck("up", scroller, () => considerNavigate("up"));
       } else {
         // opposite swipe cancels
-        if (dy > SWIPE && intentRef.current.dir === "up") resetIntent();
-        if (dy < -SWIPE && intentRef.current.dir === "down") resetIntent();
+        if (dy > SWIPE && intentRef.current.dir === "up") {
+          resetIntent();
+          cancelRestCheck();
+        }
+        if (dy < -SWIPE && intentRef.current.dir === "down") {
+          resetIntent();
+          cancelRestCheck();
+        }
       }
       touchStartY.current = null;
     };
@@ -180,8 +282,9 @@ export default function PageScroller({
     wheelTarget.addEventListener("touchstart", onTouchStart as EventListener, { passive: true });
     wheelTarget.addEventListener("touchend", onTouchEnd as EventListener, { passive: true });
 
-    // If you navigate to a new page, clear any lingering intent
+    // new page => clear state
     resetIntent();
+    cancelRestCheck();
 
     return () => {
       wheelTarget.removeEventListener("wheel", onWheel as EventListener);
@@ -189,9 +292,20 @@ export default function PageScroller({
       wheelTarget.removeEventListener("touchstart", onTouchStart as EventListener);
       wheelTarget.removeEventListener("touchend", onTouchEnd as EventListener);
       resetIntent();
+      cancelRestCheck();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname, routes.join("|"), nextRoute, prevRoute, cooldownMs, edgeThreshold, edgeIntentCount, edgeIntentWindowMs]);
+  }, [
+    pathname,
+    routes.join("|"),
+    nextRoute,
+    prevRoute,
+    cooldownMs,
+    edgeThreshold,
+    edgeIntentCount,
+    edgeIntentWindowMs,
+    edgeRestMs,
+  ]);
 
   return null;
 }
