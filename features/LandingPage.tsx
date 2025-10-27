@@ -23,7 +23,7 @@ export default function LandingPage() {
 
       <p className="text-muted-foreground text-lg">
         This site hopes to host a collection of projects the will explore 
-        compuational biology and bioinformatics. These project are instended
+        compuational biology and bioinformatics. These project are intended
         to walk through the process of analyzing data and coming to 
         conclusions.
       </p>
